@@ -75,7 +75,7 @@ struct tstat {
 		int	curcpu;		/* current processor            */
 		int	sleepavg;       /* sleep average percentage     */
 		int	ifuture[4];	/* reserved for future use	*/
-		char	wchan[16];	/* wait channel string    	*/
+		char	wchan[32];	/* wait channel string    	*/
 		count_t	rundelay;	/* schedstat rundelay (nanosec)	*/
 		count_t	blkdelay;	/* blkio delay (ticks)		*/
 		count_t	cfuture[3];	/* reserved for future use	*/

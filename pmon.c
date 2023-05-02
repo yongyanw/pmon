@@ -4240,8 +4240,10 @@ calcdiff(struct tstat *devstat, const struct tstat *curstat,
 	devstat->cpu.curcpu   = curstat->cpu.curcpu;
 	devstat->cpu.sleepavg = curstat->cpu.sleepavg;
 
-	if (curstat->cpu.wchan[0])
-		strcpy(devstat->cpu.wchan, curstat->cpu.wchan);
+	if (curstat->cpu.wchan[0]) {
+		strncpy(devstat->cpu.wchan, curstat->cpu.wchan, sizeof(curstat->cpu.wchan) - 1);
+		devstat->cpu.wchan[sizeof(curstat->cpu.wchan) - 1] = '\0';
+	}
 	else
 		devstat->cpu.wchan[0] = 0;
 
