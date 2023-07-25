@@ -756,7 +756,6 @@ void find_release()
 /* Full Args Mode stuff here */
 
 #define ARGSMAX 1024*8
-#define CMDLEN 4096
 
 struct {
     int pid;
@@ -4407,16 +4406,16 @@ calcdiff(struct tstat *devstat, const struct tstat *curstat,
 static int
 procstat(struct tstat *curtask, unsigned long long bootepoch, char isproc)
 {
-	FILE	*fp;
+	FILE	*lfp;
 	int	nr;
 	char	line[4096], *p, *cmdhead, *cmdtail;
 
-	if ( (fp = fopen("stat", "r")) == NULL)
+	if ( (lfp = fopen("stat", "r")) == NULL)
 		return 0;
 
-	if ( (nr = fread(line, 1, sizeof line-1, fp)) == 0)
+	if ( (nr = fread(line, 1, sizeof line-1, lfp)) == 0)
 	{
-		fclose(fp);
+		fclose(lfp);
 		return 0;
 	}
 
@@ -4430,7 +4429,7 @@ procstat(struct tstat *curtask, unsigned long long bootepoch, char isproc)
 
 	if (!cmdhead || !cmdtail || cmdtail < cmdhead) // parsing failed?
 	{
-		fclose(fp);
+		fclose(lfp);
 		return 0;
 	}
 
@@ -4470,7 +4469,7 @@ procstat(struct tstat *curtask, unsigned long long bootepoch, char isproc)
 
 	if (nr < 12)		/* parsing failed? */
 	{
-		fclose(fp);
+		fclose(lfp);
 		return 0;
 	}
 
@@ -4482,7 +4481,7 @@ procstat(struct tstat *curtask, unsigned long long bootepoch, char isproc)
 	curtask->mem.vmem   /= 1024;
 	curtask->mem.rmem   *= pagesize/1024;
 
-	fclose(fp);
+	fclose(lfp);
 
 	switch (curtask->gen.state)
 	{
@@ -4689,18 +4688,17 @@ procio(struct tstat *curtask)
 static void
 proccmd(struct tstat *curtask)
 {
-	FILE		*fp;
+	FILE		*lfp;
 	register int 	i, nr;
 
-	//memset(curtask->gen.cmdline, 0, CMDLEN+1);
-	memset(curtask->gen.cmdline, 0, 1);
+	memset(curtask->gen.cmdline, 0, CMDLEN+1);
 
-	if ( (fp = fopen("cmdline", "r")) != NULL)
+	if ( (lfp = fopen("cmdline", "r")) != NULL)
 	{
 		register char *p = curtask->gen.cmdline;
 
-		nr = fread(p, 1, CMDLEN, fp);
-		fclose(fp);
+		nr = fread(p, 1, CMDLEN, lfp);
+		fclose(lfp);
 
 		if (nr >= 0)	/* anything read ? */
 		{
@@ -5039,7 +5037,6 @@ photoproclist(struct tstat *tasklist, int pidcount, char ** pidlist)
 		proccmd(curtask);		/* from /proc/pid/cmdline */
 		dockstat += proccont(curtask);	/* from /proc/pid/cpuset  */
 
-		
 		/*
 		** reading the smaps file for every process with every sample
 		** is a really 'expensive' from a CPU consumption point-of-view,
@@ -5054,7 +5051,7 @@ photoproclist(struct tstat *tasklist, int pidcount, char ** pidlist)
 		*/
                 if (getwchan)
                 	procwchan(curtask);
-		
+
 		// read network stats from netatop
 		netatop_gettask(curtask->gen.tgid, 'g', curtask);
 		
