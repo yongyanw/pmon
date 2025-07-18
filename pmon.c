@@ -5099,6 +5099,7 @@ void pmon_smp(double elapsed) {
 	static int smp_first_time = 1;
 	double cpu_perc;
 	double mem_resident;
+	double mem_virtual;
 	double disk_read;
 	double disk_write;
 	double disk_total;
@@ -5135,6 +5136,7 @@ void pmon_smp(double elapsed) {
 		calcdiff(devtpres, curtpres + i, pretpres + i, smp_first_time, psc.availcpu);
 		cpu_perc = (double) (devtpres->cpu.stime + devtpres->cpu.utime) * 100 / (psc.availcpu / psc.nrcpu);
 		mem_resident = devtpres->mem.rmem / 1024.0;
+		mem_virtual = devtpres->mem.vmem / 1024.0;
 
 		if (devtpres->dsk.wsz > devtpres->dsk.cwsz)
 			disk_write = smp_first_time ? 0 : (devtpres->dsk.wsz - devtpres->dsk.cwsz) / 2.0 / elapsed;
@@ -5148,7 +5150,8 @@ void pmon_smp(double elapsed) {
 		net_total = net_read + net_write;
 
 		fprintf(fp, "%s.cpu,%s,%.1f\n", gnamelist[i], LOOP, cpu_perc);
-		fprintf(fp, "%s.mem,%s,%.1f\n", gnamelist[i], LOOP, mem_resident);
+		fprintf(fp, "%s.rmem,%s,%.1f\n", gnamelist[i], LOOP, mem_resident);
+		fprintf(fp, "%s.vmem,%s,%.1f\n", gnamelist[i], LOOP, mem_virtual);
 		fprintf(fp, "%s.disk,%s,%.1f,%.1f,%.1f\n", gnamelist[i], LOOP, disk_total, disk_read, disk_write);
 		fprintf(fp, "%s.net,%s,%.1f,%.1f,%.1f\n", gnamelist[i], LOOP, net_total, net_read, net_write);
 
@@ -5932,7 +5935,8 @@ int main(int argc, char **argv)
 
 	for (int i = 0; i < gpidcount; i++) {
 		fprintf(fp, "%s.cpu,%s.cpu %d %s,G_CPU%%\n", gnamelist[i], gnamelist[i], i + 1, run_name);
-		fprintf(fp,"%s.mem,%s.mem MB %s,MEM\n", gnamelist[i], gnamelist[i], run_name);
+		fprintf(fp,"%s.rmem,%s.rmem MB %s,R_MEM\n", gnamelist[i], gnamelist[i], run_name);
+		fprintf(fp,"%s.vmem,%s.vmem MB %s,V_MEM\n", gnamelist[i], gnamelist[i], run_name);
 		fprintf(fp, "%s.disk,%s.disk KB/s %s,TOTAL,READ,WRITE\n", gnamelist[i], gnamelist[i], run_name) ;
 		fprintf(fp,"%s.net,%s.net KB/s %s,TOTAL,READ,WRITE\n", gnamelist[i], gnamelist[i], run_name);
 	}
