@@ -4148,11 +4148,11 @@ struct sstat *tempstat;
 struct sstat *devsstat;
 struct syscap psc;
 
-void gauss_init(char* gauss_pids_names) {
+void pmon_init(char* pmon_pids_names) {
 	int index = 0;
 	int comma_count = 0;
-	while (gauss_pids_names[index] != 0) {
-		if (gauss_pids_names[index] == ',') {
+	while (pmon_pids_names[index] != 0) {
+		if (pmon_pids_names[index] == ',') {
 			comma_count ++;
 		}
 		index ++;
@@ -4162,15 +4162,15 @@ void gauss_init(char* gauss_pids_names) {
 	gnamelist = MALLOC(sizeof(char*) * gpidcount);
 	index = 0;
 	int i = 0;
-	gpidlist[i/2] = gauss_pids_names;
-	while (gauss_pids_names[index] != 0) {
-		if (gauss_pids_names[index] == ',') {
-			gauss_pids_names[index] = 0;
+	gpidlist[i/2] = pmon_pids_names;
+	while (pmon_pids_names[index] != 0) {
+		if (pmon_pids_names[index] == ',') {
+			pmon_pids_names[index] = 0;
 			i++;
 			if (i & 1) {
-				gnamelist[i/2] = gauss_pids_names + index + 1;
+				gnamelist[i/2] = pmon_pids_names + index + 1;
 			} else {
-				gpidlist[i/2] = gauss_pids_names + index + 1;
+				gpidlist[i/2] = pmon_pids_names + index + 1;
 			}
 		}
 		index++;
@@ -5095,7 +5095,7 @@ photoproclist(struct tstat *tasklist, int pidcount, char ** pidlist)
 	return tval;
 }
 
-void gauss_smp(double elapsed) {
+void pmon_smp(double elapsed) {
 	static int smp_first_time = 1;
 	double cpu_perc;
 	double mem_resident;
@@ -5395,7 +5395,7 @@ int main(int argc, char **argv)
 		   "?abc:C:Dd:EfF:g:hi:I:Jl:m:MNpr:Rs:tTUVxXz"))) {
 	switch (i) {
 	case 'i':
-		gauss_init(optarg);
+		pmon_init(optarg);
 		break;
 	case '?':
 	    hint();
@@ -9535,7 +9535,7 @@ I/F Name Recv=KB/s Trans=KB/s packin packout insize outsize Peak->Recv Trans
 	}
 
 	if (show_smp && !cursed) {
-		gauss_smp(elapsed);
+		pmon_smp(elapsed);
 	}
 
 	if (cursed) {
