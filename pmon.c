@@ -5150,8 +5150,7 @@ void pmon_smp(double elapsed) {
 		net_total = net_read + net_write;
 
 		fprintf(fp, "%s.cpu,%s,%.1f\n", gnamelist[i], LOOP, cpu_perc);
-		fprintf(fp, "%s.rmem,%s,%.1f\n", gnamelist[i], LOOP, mem_resident);
-		fprintf(fp, "%s.vmem,%s,%.1f\n", gnamelist[i], LOOP, mem_virtual);
+		fprintf(fp, "%s.mem,%s,%.1f,%.1f\n", gnamelist[i], LOOP, mem_resident, mem_virtual);
 		fprintf(fp, "%s.disk,%s,%.1f,%.1f,%.1f\n", gnamelist[i], LOOP, disk_total, disk_read, disk_write);
 		fprintf(fp, "%s.net,%s,%.1f,%.1f,%.1f\n", gnamelist[i], LOOP, net_total, net_read, net_write);
 
@@ -5935,8 +5934,7 @@ int main(int argc, char **argv)
 
 	for (int i = 0; i < gpidcount; i++) {
 		fprintf(fp, "%s.cpu,%s.cpu %d %s,G_CPU%%\n", gnamelist[i], gnamelist[i], i + 1, run_name);
-		fprintf(fp,"%s.rmem,%s.rmem MB %s,R_MEM\n", gnamelist[i], gnamelist[i], run_name);
-		fprintf(fp,"%s.vmem,%s.vmem MB %s,V_MEM\n", gnamelist[i], gnamelist[i], run_name);
+		fprintf(fp,"%s.mem,%s.mem MB %s,R_MEM, V_MEM\n", gnamelist[i], gnamelist[i], run_name);
 		fprintf(fp, "%s.disk,%s.disk KB/s %s,TOTAL,READ,WRITE\n", gnamelist[i], gnamelist[i], run_name) ;
 		fprintf(fp,"%s.net,%s.net KB/s %s,TOTAL,READ,WRITE\n", gnamelist[i], gnamelist[i], run_name);
 	}
